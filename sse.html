@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>sse</title>
+</head>
+<body>
+<button id='start'>点击开始</button>
+<br/>
+<br/>
+<button id='stop'>点击停止</button>
+<br/>
+<br/>
+<div id='list'>
+	
+</div> 
+    <script>
+	 var isSending = false;
+	 var evtSource;
+	 document.getElementById("start").onclick=function(){
+		console.log('start');
+		isSending = true;
+		msg();
+	 }
+	 document.getElementById("stop").onclick=function(){
+		console.log('stop');
+		if(evtSource&&isSending){
+			isSending=false;
+			evtSource.close();
+		}
+	 }
+	 function msg(){
+		 if ('EventSource' in window) {
+			 evtSource = new EventSource("sse.php");
+			 evtSource.onmessage = function(event) {
+				console.log(event);
+				const newElement = document.createElement("li");
+				const eventList = document.getElementById("list");
+				newElement.innerHTML = "message: " + event.data;
+				eventList.appendChild(newElement);
+			}
+		 }else{
+			alert('抱歉，您的浏览器不支持EventSource');
+		 }
+	 }
+    </script>
+</body>
+</html>
